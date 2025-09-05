@@ -125,42 +125,64 @@ if(e.target.parentElement.className==="delete-item secondary-content")
 const form = document.querySelector("#task-form");
 const taskInput = document.querySelector("#task");
 const ulList = document.querySelector(".collection");
-const deleteBtn=document.querySelector(".clear-tasks");
-const edit =document.querySelector(".collection");
-const replace = document.querySelector(".collection-item");
-console.log(replace);
-loadEventlistener();
-function loadEventlistener(){
-    form.addEventListener("click",addTask);
-    
-    deleteBtn.addEventListener("click",clearTask);
-    edit.addEventListener("click",editTask);
+const deleteBtn = document.querySelector(".clear-tasks");
+
+// Load all events
+loadEventListeners();
+
+function loadEventListeners() {
+  // Add Task
+  form.addEventListener("submit", addTask);
+  // Delete single task
+  ulList.addEventListener("click", deleteTask);
+  // Clear all tasks
+  deleteBtn.addEventListener("click", clearTasks);
 }
-    function addTask(e){
-        e.preventDefault();
-        if(taskInput.value=="")
-        {
-            alert("please fill the field");
-        }
-        else{
-            const li = document.createElement("li");
-            li.className="collection-item";
-            li.innerText=taskInput.value;
-            const link = document.querySelector( "a");
-            link.className="delete-item secondary-content";
-            link.innerHTML=` <i class="fa fa-remove"></i>`;
-            link.innerHTML=`<i class="fa fa-edit"></i>`;
-            li.appendChild(link);
-            ulList.appendChild(li);
-            taskInput.value="";
-        }
-    }
-function clearTask(){
-    ulList.innerHTML="";
+
+// Add Task
+function addTask(e) {
+  e.preventDefault();
+
+  if (taskInput.value === "") {
+    alert("Please fill the field");
+  } else {
+    // Create li
+    const li = document.createElement("li");
+    li.className = "collection-item";
+    li.innerText = taskInput.value;
+
+    // Create link (delete button)
+    const link = document.createElement("a");
+    link.className = "delete-item secondary-content";
+    link.innerHTML = `<i class="fa fa-remove"></i>`;
+
+    // Create edit button
+    const editSpan = document.createElement("span");
+    editSpan.className = "edit";
+    editSpan.innerHTML = `<i class="fa fa-edit"></i>`;
+
+    // Append edit and delete to li
+    link.prepend(editSpan);
+    li.appendChild(link);
+
+    // Append li to ul
+    ulList.appendChild(li);
+
+    // Clear input
+    taskInput.value = "";
+  }
 }
-function editTask(e){
-    if(e.target.parentElement.className=="edit")
-    {
-        
-    }
+
+// Delete Task
+function deleteTask(e) {
+  if (e.target.parentElement.classList.contains("delete-item")) {
+    e.target.parentElement.parentElement.remove();
+  }
 }
+
+// Clear All Tasks
+function clearTasks() {
+  ulList.innerHTML = "";
+}
+
+
