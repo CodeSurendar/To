@@ -114,14 +114,6 @@
 //     console.log(`Event Type ${e.type}`);
 //     console.log(e.target.value);
 // }
-const ul=document.querySelector(".collection");
-ul.addEventListener("click",delItem);
-function delItem(e){
-if(e.target.parentElement.className==="delete-item secondary-content")
-{
-    e.target.parentElement.parentElement.remove();
-}
-}
 const form = document.querySelector("#task-form");
 const taskInput = document.querySelector("#task");
 const ulList = document.querySelector(".collection");
@@ -133,8 +125,8 @@ loadEventListeners();
 function loadEventListeners() {
   // Add Task
   form.addEventListener("submit", addTask);
-  // Delete single task
-  ulList.addEventListener("click", deleteTask);
+  // Delete or Edit Task
+  ulList.addEventListener("click", manageTask);
   // Clear all tasks
   deleteBtn.addEventListener("click", clearTasks);
 }
@@ -143,26 +135,32 @@ function loadEventListeners() {
 function addTask(e) {
   e.preventDefault();
 
-  if (taskInput.value === "") {
-    alert("Please fill the field");
+  if (taskInput.value.trim() === "") {
+    alert("Please enter a task");
   } else {
     // Create li
     const li = document.createElement("li");
     li.className = "collection-item";
     li.innerText = taskInput.value;
 
-    // Create link (delete button)
+    // Create link container
     const link = document.createElement("a");
     link.className = "delete-item secondary-content";
-    link.innerHTML = `<i class="fa fa-remove"></i>`;
 
-    // Create edit button
+    // Add edit icon
     const editSpan = document.createElement("span");
     editSpan.className = "edit";
     editSpan.innerHTML = `<i class="fa fa-edit"></i>`;
 
-    // Append edit and delete to li
-    link.prepend(editSpan);
+    // Add delete icon
+    const delIcon = document.createElement("i");
+    delIcon.className = "fa fa-remove";
+
+    // Append icons
+    link.appendChild(editSpan);
+    link.appendChild(delIcon);
+
+    // Append link to li
     li.appendChild(link);
 
     // Append li to ul
@@ -173,10 +171,18 @@ function addTask(e) {
   }
 }
 
-// Delete Task
-function deleteTask(e) {
-  if (e.target.parentElement.classList.contains("delete-item")) {
+// Manage Tasks (Delete or Edit)
+function manageTask(e) {
+  // Delete task
+  if (e.target.classList.contains("fa-remove")) {
     e.target.parentElement.parentElement.remove();
+  }
+
+  // Edit task
+  if (e.target.classList.contains("fa-edit")) {
+    const li = e.target.closest("li");
+    taskInput.value = li.firstChild.textContent.trim(); // Put old value in input
+    li.remove(); // Remove old li, will re-add after editing
   }
 }
 
@@ -184,5 +190,7 @@ function deleteTask(e) {
 function clearTasks() {
   ulList.innerHTML = "";
 }
+
+
 
 
